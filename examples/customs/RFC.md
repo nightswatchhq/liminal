@@ -2,7 +2,7 @@
 
 - **Status:** Draft
 - **Author:** Pete
-- **Target:** `examples/customs/` in `lodestar-team/liminal`
+- **Target:** `examples/customs/` in `nightswatchhq/liminal`
 - **Base:** Wasmtime 44 / WASIp2 (WASI 0.2.x) — the runtime the repo already targets
 - **Related:** GRC-007 ("Conduit"), [`research.md`](../../research.md), [`examples/uni-v3-swaps`](../uni-v3-swaps)
 
