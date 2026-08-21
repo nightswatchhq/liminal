@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  # The commands CI runs live in yatr.toml, so `yatr ci` locally is the
+  # same gate. Bump deliberately.
+  YATR_VERSION: "1.1.0"
+
 jobs:
   build-test-attest:
     runs-on: ubuntu-latest
@@ -22,25 +27,30 @@ jobs:
       # the committed .wasm binaries, so this is what catches component breakage.
       # Builds to target/ — it does NOT overwrite the committed examples/*.wasm,
       # so the attestation below still checks the signed artifacts.
+      - name: Cache yatr
+        id: cache-yatr
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/yatr
+          key: yatr-${{ runner.os }}-${{ env.YATR_VERSION }}
+
+      - name: Install yatr
+        if: steps.cache-yatr.outputs.cache-hit != 'true'
+        # RUSTFLAGS is cleared deliberately: yatr is a different crate and must
+        # not inherit this project's flags (a `-D warnings` or a custom linker
+        # would fail or mislink the install).
+        run: cargo install yatr --version ${{ env.YATR_VERSION }} --locked
+        env:
+          RUSTFLAGS: ""
+
       - name: Build components (wasm32-wasip2)
-        run: |
-          cargo build --target wasm32-wasip2 --release \
-            -p arb-decoder -p arb-enricher -p arb-sink-json \
-            -p uni-v3-decoder -p uni-v3-price-enricher \
-            -p uni-v3-sink-postgres -p uni-v3-sink-kafka \
-            -p customs-decoder -p customs-screener -p customs-screener-http \
-            -p customs-enricher -p customs-sink-sor -p customs-sink-kafka \
-            -p customs-sink-quarantine -p customs-sink-hold
+        run: yatr components
 
       - name: Test (host, manifest validation, capability + compliance enforcement)
-        run: cargo test -p liminal-host
+        run: yatr test
 
       # The compliance gate: verify the signed Customs composition against the
       # committed component binaries. A drift in topology, capability boundaries,
       # or component bytes fails the build.
       - name: Verify Customs attestation
-        run: |
-          cargo run --release -p liminal-host -- compose verify \
-            examples/customs/customs.pipeline.toml \
-            --sig examples/customs/customs.pipeline.toml.sig \
-            --pub examples/customs/customs.pub
+        run: yatr attest
