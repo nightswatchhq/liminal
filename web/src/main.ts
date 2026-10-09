@@ -3,7 +3,7 @@ import { runPipeline, type Routed } from "./host.js";
 // Vite ?raw import — the fixture transfers bundled as text.
 import fixturesRaw from "./transfers.jsonl?raw";
 
-const REPO = "https://github.com/nightswatchhq/liminal";
+const REPO = "https://github.com/nuthatch-org/liminal";
 const SANCTIONED = "0x722122df12d4e14e13ac3b6895a86e84145b6967";
 // The signed offline composition hash (liminal compose hash), v1.0.0.
 const COMPOSITION_HASH =

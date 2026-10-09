@@ -1,6 +1,6 @@
 # Liminal
 
-[![CI](https://github.com/nightswatchhq/liminal/actions/workflows/ci.yml/badge.svg)](https://github.com/nightswatchhq/liminal/actions/workflows/ci.yml)
+[![CI](https://github.com/nuthatch-org/liminal/actions/workflows/ci.yml/badge.svg)](https://github.com/nuthatch-org/liminal/actions/workflows/ci.yml)
 
 **Polyglot, capability-isolated WASIp2 component runtime for streaming indexing pipelines on The Graph.**
 
